@@ -20,3 +20,4 @@ class MemberServiceProvider extends ServiceProvider
         //
     }
 }
+        

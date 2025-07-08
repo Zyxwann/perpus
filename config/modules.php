@@ -271,6 +271,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'register' => [
+        'migrations' => true, // ✅ agar migrasi di module terbaca
         'translations' => true,
         /**
          * load files on boot or register method
