@@ -5,14 +5,16 @@ namespace Modules\Buku\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Buku\Entities\Buku;
+use GuzzleHttp\Client;
 
 class BukuController extends Controller
 {
     public function listBukuForMember()
     {
-        $buku = Buku::all(); //ambil semua data buku
+        $buku = Buku::all();
         return view('member::data_buku', compact('buku'));
     }
+
     public function index()
     {
         $buku = Buku::all();
@@ -83,11 +85,9 @@ class BukuController extends Controller
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        
         $data = $request->only(['judul', 'penulis', 'penerbit', 'tahun_terbit', 'isbn', 'jumlah']);
 
         if ($request->hasFile('foto')) {
-            // Hapus foto lama
             if ($buku->foto && file_exists(public_path('uploads/foto_buku/' . $buku->foto))) {
                 unlink(public_path('uploads/foto_buku/' . $buku->foto));
             }
@@ -112,5 +112,33 @@ class BukuController extends Controller
 
         $buku->delete();
         return redirect()->route('buku.index')->with('success', 'Buku dihapus!');
+    }
+
+    // ✅ Tambahan: CONSUME API eksternal pakai Guzzle
+    public function fetchExternalBooks()
+    {
+        $client = new Client();
+        
+        try {
+            $response = $client->get(env('APP_API_URL' ).'/api/buku'); 
+            $data = json_decode($response->getBody(), true);
+            dd($data);
+
+            $books = collect($data['docs'])->take(10)->map(function ($item) {
+                return [
+                    'judul' => $item['title'] ?? '-',
+                    'penulis' => $item['author_name'][0] ?? '-',
+                    'penerbit' => $item['publisher'][0] ?? '-',
+                    'tahun_terbit' => $item['first_publish_year'] ?? '-',
+                    'isbn' => $item['isbn'][0] ?? 'N/A',
+                    'foto' => $item['foto'] ?? '' 
+                ];
+            });
+
+            return view('buku::external_books', compact('books'));
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengambil data buku eksternal: ' . $e->getMessage());
+        }
     }
 }
