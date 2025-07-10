@@ -1,5 +1,7 @@
 <?php
 
+
 return [
-    'name' => 'Buku',
+
+    'name' => 'Bukus',
 ];
