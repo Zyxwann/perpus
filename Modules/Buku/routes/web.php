@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Buku\Http\Controllers\BukuController;
 
-Route::resource('buku', BukuController::class);
+Route::get('/buku/external', [BukuController::class, 'fetchExternalBooks'])->name('buku.external');
+
+// Route::resource('buku', BukuController::class);
 Route::get('/buku', [BukuController::class, 'index'])->name('buku.index');
 Route::get('/buku/create', [BukuController::class, 'create'])->name('buku.create');
 Route::post('/buku', [BukuController::class, 'store'])->name('buku.store');
