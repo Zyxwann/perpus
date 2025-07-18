@@ -15,3 +15,9 @@
     <textarea name="alamat" id="alamat" class="form-control" rows="3"
         required>{{ old('alamat', $member->alamat ?? '') }}</textarea>
 </div>
+
+<div class="mb-3">
+    <label for="telepon" class="form-label">No. Telepon</label>
+    <input type="text" name="telepon" id="telepon" class="form-control"
+        value="{{ old('telepon', $member->telepon ?? '') }}">
+</div>

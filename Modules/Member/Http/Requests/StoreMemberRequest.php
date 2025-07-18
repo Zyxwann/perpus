@@ -3,34 +3,35 @@
 namespace Modules\Member\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StoreMemberRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     */
+    public function authorize(): bool
+    {
+        return true; // pastikan true agar bisa digunakan tanpa auth guard
+    }
+
     public function rules(): array
     {
-        $member = $this->route('member');
-
         return [
-            'nama'   => 'required|string|max:255',
-            'email'  => [
-                'required',
-                'email',
-                Rule::unique('members', 'email')->ignore($member?->id), // ini solusi kuncinya
-            ],
-            'alamat' => 'required|string|max:255',
+            'nama' => 'required|string|max:100',
+            'email' => 'required|email',
+            'alamat' => 'nullable|string',
+            'telepon' => 'nullable|string|max:15',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ];
     }
 
-
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    public function messages(): array
     {
-        return true;
+        return [
+            'nama.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'telepon.max' => 'Telepon maksimal 15 karakter.',
+            'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Foto harus berformat jpg, jpeg, atau png.',
+            'foto.max' => 'Ukuran foto maksimal 2MB.',
+        ];
     }
 }

@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'member_api' => [
+        'url' => env('MEMBER_API_URL'),
+    ],
+
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
